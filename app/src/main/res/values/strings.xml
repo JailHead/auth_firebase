@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">BD_SQLite</string>
+    <string name="titulo">Gestion de empleados</string>
+    <string name="numEmp">Escribe Número</string>
+    <string name="nombre">Escribe nombre</string>
+    <string name="apellidos">Escribe apellidos</string>
+    <string name="sueldo">Ingresa sueldo</string>
+    <string name="agregar">Agregar</string>
+    <string name="buscar">Buscar</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="lista">Lista</string>
+    <string name="titulo2">Listado de empleados</string>
+    <string name="detalle">Registros:</string>
+    <string name="regreso">Regresar</string>
+</resources>
