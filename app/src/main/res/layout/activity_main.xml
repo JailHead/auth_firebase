@@ -10,18 +10,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingVertical="64dp"
+        android:paddingVertical="72dp"
         android:paddingHorizontal="48dp"
         android:orientation="vertical" >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:orientation="vertical" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="190dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="24dp"
                 android:orientation="vertical"
                 android:gravity="center_horizontal" >
 
@@ -44,21 +45,25 @@
             </LinearLayout>
 
             <EditText
+                android:id="@+id/txtNumEmp"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/input_txt"
                 android:hint="@string/numEmp"
+                android:importantForAutofill="no"
                 android:inputType="number|numberDecimal"
                 android:paddingHorizontal="8dp"
                 android:textSize="16sp"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <EditText
+                android:id="@+id/txtNombre"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
+                android:importantForAutofill="no"
                 android:paddingHorizontal="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:hint="@string/nombre"
                 android:inputType="text|textAutoCorrect|textCapSentences"
                 android:textSize="16sp"
@@ -66,10 +71,12 @@
                 tools:ignore="TouchTargetSizeCheck" />
 
             <EditText
+                android:id="@+id/txtApellidos"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
+                android:importantForAutofill="no"
                 android:paddingHorizontal="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:hint="@string/apellidos"
                 android:inputType="text|textAutoCorrect|textCapSentences"
                 android:textSize="16sp"
@@ -77,6 +84,7 @@
                 tools:ignore="TouchTargetSizeCheck" />
 
             <EditText
+                android:id="@+id/txtSueldo"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:paddingHorizontal="8dp"
@@ -85,9 +93,59 @@
                 android:inputType="number|numberDecimal"
                 android:textSize="16sp"
                 android:background="@drawable/input_txt"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="Autofill,TouchTargetSizeCheck" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" >
+
+            <ImageButton
+                android:id="@+id/btnAgregar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_btn_bg"
+                android:src="@drawable/add_48px"
+                android:contentDescription="@string/agregar" />
+
+            <ImageButton
+                android:id="@+id/btnBuscar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_btn_bg"
+                android:src="@drawable/person_search_48px"
+                android:contentDescription="@string/buscar" />
+
+            <ImageButton
+                android:id="@+id/btnActualizar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_btn_bg"
+                android:src="@drawable/autorenew_48px"
+                android:contentDescription="@string/actualizar" />
+
+            <ImageButton
+                android:id="@+id/btnEliminar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_btn_bg"
+                android:src="@drawable/delete_48px"
+                android:contentDescription="@string/eliminar" />
+            <Button
+                android:id="@+id/btnLista"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:text="@string/lista"
+                android:textSize="16sp"
+                android:backgroundTint="#273F4F"
+                app:cornerRadius="5dp" />
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
