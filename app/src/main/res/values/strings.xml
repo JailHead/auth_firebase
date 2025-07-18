@@ -1,16 +1,25 @@
 <resources>
-    <string name="app_name">BD_SQLite</string>
+    <string name="app_name">Mov2_Mysql</string>
     <string name="titulo">Gestion de empleados</string>
     <string name="numEmp">Escribe Número</string>
     <string name="nombre">Escribe nombre</string>
     <string name="apellidos">Escribe apellidos</string>
-    <string name="sueldo">Ingresa sueldo</string>
+    <string name="telefono">Escribe teléfono</string>
+    <string name="sueldo">Ingresa correo electrónico</string>
     <string name="agregar">Agregar</string>
     <string name="buscar">Buscar</string>
     <string name="actualizar">Actualizar</string>
     <string name="eliminar">Eliminar</string>
     <string name="lista">Lista</string>
-    <string name="titulo2">Listado de empleados</string>
-    <string name="detalle">Registros:</string>
+    <string name="titulo2">Lista de Contactos</string>
+    <string name="detalle">Detalles de Contactos</string>
     <string name="regreso">Regresar</string>
+
+    <string name="login_title">Iniciar Sesión</string>
+    <string name="usuario">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Ingresar</string>
+    <string name="logout">Cerrar Sesión</string>
+
+    <string name="actualizar_lista">Actualizar Lista</string>
 </resources>

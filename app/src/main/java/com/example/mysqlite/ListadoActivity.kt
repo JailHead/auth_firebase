@@ -1,66 +1,173 @@
 package com.example.mysqlite
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.loopj.android.http.AsyncHttpClient
+import com.loopj.android.http.AsyncHttpResponseHandler
+import cz.msebera.android.httpclient.Header
+import org.json.JSONArray
+import org.json.JSONException
 
 class ListadoActivity : AppCompatActivity() {
-    //Instancias de componentes
-    private lateinit var etListado: EditText
-    private lateinit var btnregresar: Button
-    //Instancia del controlador
-    private lateinit var admin: ControladorBD
+    // Variables simplificadas
+    private lateinit var txtDetalle: TextView
+    private lateinit var txtContador: TextView
+    private lateinit var btnRegresar: Button
+    private lateinit var btnActualizar: Button
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listado)
-        //Asociar la instancia con el componente
-        etListado = findViewById(R.id.txtDetalle)
-        btnregresar = findViewById(R.id.btnRegresar)
-        /*
-            Creación de la base de datos, de manera local, cuyo parametros son:
-            contexto de la aplicación, nombre de la BD, versión
-        */
-        admin = ControladorBD(this, "empresapatito.db", null, 1)
-        //Define el modo de acceso a la BD
-        val bd = admin.readableDatabase
-        //Instancia del apuntador al registro de busqueda
-        val registro = bd.rawQuery("select * from empleado order by numemp", null)
-        //Variable para la cantidad de registro obtenidos
-        val n = registro.count
-        //Variable para control de datos en el TextView
-        var nr = 0
 
-        if (n > 0) {
-            //Mover el cursor al inicio de los registro obtenidos
-            registro.moveToFirst()
-            etListado.text.insert(0,"")
-            //Ciclo repetitivo para colocar la información dentro del TextView
-            do {
-                etListado.text.insert(nr,"Numero: ${registro.getString(0)} "
-                        +
-                        "\nNombre: ${registro.getString(1)} " +
-                        "\nApellidos: ${registro.getString(2)} " +
-                        "\nSueldo: ${registro.getString(3)}\n")
-                nr++
-            } while (registro.moveToNext()) //Si existen más registros
-        } else {
-            //Mensaje informativo que no hay campos
-            Toast.makeText(this, "Sin registro de empleados.", Toast.LENGTH_SHORT).show()
+        // Asociar componentes
+        txtDetalle = findViewById(R.id.txtDetalle)
+        txtContador = findViewById(R.id.txtContador)
+        btnRegresar = findViewById(R.id.btnRegresar)
+        btnActualizar = findViewById(R.id.btnActualizar)
+
+        // ✅ DEBUG: Forzar visibilidad del TextView
+        txtDetalle.setBackgroundColor(android.graphics.Color.WHITE)
+        txtDetalle.setTextColor(android.graphics.Color.BLACK)
+        txtDetalle.textSize = 14f
+
+        // Configurar botones
+        btnActualizar.setOnClickListener {
+            listarContactos()
         }
-        //Cerrando la BD
-        bd.close()
-        //Evento onClick
-        btnregresar.setOnClickListener {
-            //Objeto para conectar a otra Activity
-            val intent = Intent(this, MainActivity::class.java)
-            //Iniciar la Activity
-            startActivity(intent)
+        btnRegresar.setOnClickListener {
+            finish()
         }
+
+        listarContactos()
+    }
+
+    private fun listarContactos() {
+        Log.d("DEBUG", "listarContactos - INICIADO")
+
+        // Estado de carga visible
+        txtContador.text = "🔄 Consultando servidor..."
+        txtDetalle.text = "⏳ Conectando a la base de datos...\n\nEspere un momento..."
+
+        val cliente = AsyncHttpClient()
+        val url = "http://ec2-3-94-163-92.compute-1.amazonaws.com/api/androidConsultaMySql.php"
+
+        cliente.get(url, object : AsyncHttpResponseHandler() {
+            override fun onSuccess(
+                statusCode: Int,
+                headers: Array<Header>,
+                responseBody: ByteArray
+            ) {
+                Log.d("DEBUG", "onSuccess - RECIBIDO")
+
+                var responseString = ""
+
+                try {
+                    responseString = String(responseBody, Charsets.UTF_8)
+                    Log.d("DEBUG", "Response: $responseString")
+
+                    if (responseString.isNotEmpty() && responseString != "0") {
+                        val contactos = JSONArray(responseString)
+                        val totalContactos = contactos.length()
+
+                        Log.d("DEBUG", "Total contactos: $totalContactos")
+
+                        // ✅ FORMATO SUPER SIMPLE
+                        var listaContactos = "📱 LISTA DE CONTACTOS\n"
+                        listaContactos += "═════════════════════\n\n"
+
+                        for (i in 0 until contactos.length()) {
+                            val contacto = contactos.getJSONObject(i)
+
+                            listaContactos += "👤 CONTACTO ${i + 1}\n"
+                            listaContactos += "─────────────────\n"
+                            listaContactos += "Nombre: ${contacto.getString("Nombre")}\n"
+                            listaContactos += "Apellidos: ${contacto.getString("Apellidos")}\n"
+
+                            if (contacto.has("Telefono")) {
+                                listaContactos += "Teléfono: ${contacto.optString("Telefono", "No registrado")}\n"
+                            }
+
+                            if (contacto.has("Email")) {
+                                listaContactos += "Email: ${contacto.optString("Email", "No registrado")}\n"
+                            }
+
+                            listaContactos += "\n"
+                        }
+
+                        listaContactos += "═════════════════════\n"
+                        listaContactos += "📊 Total: $totalContactos contactos"
+
+                        Log.d("DEBUG", "Texto generado length: ${listaContactos.length}")
+                        Log.d("DEBUG", "Primeros 50 chars: ${listaContactos.take(50)}")
+
+                        // ✅ ACTUALIZAR UI CON DEBUG
+                        runOnUiThread {
+                            Log.d("DEBUG", "Actualizando UI...")
+
+                            // Forzar propiedades del TextView
+                            txtDetalle.setBackgroundColor(android.graphics.Color.WHITE)
+                            txtDetalle.setTextColor(android.graphics.Color.BLACK)
+                            txtDetalle.textSize = 14f
+
+                            // Asignar texto
+                            txtDetalle.text = listaContactos
+                            txtContador.text = "✅ Cargados: $totalContactos contactos"
+                            txtContador.setTextColor(ContextCompat.getColor(this@ListadoActivity, android.R.color.holo_green_dark))
+
+                            Log.d("DEBUG", "UI actualizada. Texto en txtDetalle: ${txtDetalle.text.take(50)}")
+
+                            // ✅ FORZAR INVALIDACIÓN DE LA VISTA
+                            txtDetalle.invalidate()
+                            txtDetalle.requestLayout()
+
+                            Toast.makeText(this@ListadoActivity, "✅ $totalContactos contactos cargados", Toast.LENGTH_SHORT).show()
+                        }
+
+                    } else {
+                        Log.d("DEBUG", "Sin contactos")
+                        runOnUiThread {
+                            txtDetalle.text = "📭 SIN CONTACTOS\n\nNo hay contactos registrados en la base de datos."
+                            txtContador.text = "📊 Total: 0 contactos"
+                        }
+                    }
+
+                } catch (e: JSONException) {
+                    Log.e("DEBUG", "Error JSON: ${e.message}")
+                    runOnUiThread {
+                        txtDetalle.text = "❌ ERROR JSON\n\nResponse: $responseString\n\nError: ${e.message}"
+                        txtContador.text = "❌ Error en consulta"
+                        Toast.makeText(this@ListadoActivity, "Error JSON: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Log.e("DEBUG", "Error general: ${e.message}")
+                    runOnUiThread {
+                        txtDetalle.text = "❌ ERROR GENERAL\n\nDetalles: ${e.message}"
+                        txtContador.text = "❌ Error"
+                        Toast.makeText(this@ListadoActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(
+                statusCode: Int,
+                headers: Array<Header>?,
+                responseBody: ByteArray?,
+                error: Throwable
+            ) {
+                Log.e("DEBUG", "onFailure: $statusCode - ${error.message}")
+
+                runOnUiThread {
+                    txtDetalle.text = "🌐 ERROR DE CONEXIÓN\n\nCódigo: $statusCode\nError: ${error.message}"
+                    txtContador.text = "🌐 Sin conexión"
+                    Toast.makeText(this@ListadoActivity, "Error de conexión: $statusCode", Toast.LENGTH_LONG).show()
+                }
+            }
+        })
     }
 }

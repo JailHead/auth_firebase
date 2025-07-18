@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingVertical="72dp"
+        android:paddingHorizontal="48dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <!-- Logo y Título -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/ic_app_logo"
+                android:contentDescription="App Logo" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-black"
+                android:textStyle="bold"
+                android:text="Iniciar Sesión"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textColor="#273F4F" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Accede a tu agenda de contactos"
+                android:textAlignment="center"
+                android:textSize="14sp"
+                android:textColor="#666666" />
+        </LinearLayout>
+
+        <!-- Formulario de Login -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:orientation="vertical">
+
+            <!-- Usuario -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Usuario"
+                android:textSize="16sp"
+                android:textColor="#273F4F"
+                android:fontFamily="sans-serif-medium" />
+
+            <EditText
+                android:id="@+id/etUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="12dp"
+                android:paddingHorizontal="16dp"
+                android:hint="Ingrese su usuario"
+                android:inputType="text"
+                android:textSize="16sp"
+                android:background="@drawable/input_txt"
+                android:importantForAutofill="no" />
+
+            <!-- Contraseña -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Contraseña"
+                android:textSize="16sp"
+                android:textColor="#273F4F"
+                android:fontFamily="sans-serif-medium" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="24dp"
+                android:paddingHorizontal="16dp"
+                android:hint="Ingrese su contraseña"
+                android:inputType="textPassword"
+                android:textSize="16sp"
+                android:background="@drawable/input_txt"
+                android:importantForAutofill="no" />
+
+            <!-- Botón Login -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="8dp"
+                android:text="INICIAR SESIÓN"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="#273F4F"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="8dp" />
+
+            <!-- Botón Info -->
+            <Button
+                android:id="@+id/btnInfo"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Ver credenciales de prueba"
+                android:textSize="14sp"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#273F4F"
+                app:cornerRadius="8dp" />
+        </LinearLayout>
+
+        <!-- Información adicional -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Sistema de Gestión de Contactos"
+                android:textSize="12sp"
+                android:textColor="#999999" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Versión 1.0"
+                android:textSize="12sp"
+                android:textColor="#CCCCCC" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

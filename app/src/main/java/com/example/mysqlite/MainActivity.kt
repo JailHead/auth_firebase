@@ -1,211 +1,331 @@
 package com.example.mysqlite
 
-import android.content.ContentValues
 import android.content.Intent
-import android.database.SQLException
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.loopj.android.http.AsyncHttpClient
+import com.loopj.android.http.AsyncHttpResponseHandler
+import cz.msebera.android.httpclient.Header
+import org.json.JSONArray
+import org.json.JSONException
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 
 class MainActivity : AppCompatActivity() {
     //Objetos de componentes gráficos
     private lateinit var etNumEmp: EditText
     private lateinit var etNombre: EditText
     private lateinit var etApellidos: EditText
-    private lateinit var etSueldo: EditText
+    private lateinit var etTelefono: EditText
+    private lateinit var etCorreo: EditText
     private lateinit var btnAgregar: ImageButton
     private lateinit var btnBuscar: ImageButton
     private lateinit var btnActualizar: ImageButton
     private lateinit var btnEliminar: ImageButton
     private lateinit var btnLista: Button
-    //Objeto para gestión de la BD
-    private lateinit var admin: ControladorBD
+    //Gestionar operaciones con la BD
+    private lateinit var requestQueue: RequestQueue
+    //API del servidor MySQL
+    private val url = "http://ec2-3-94-163-92.compute-1.amazonaws.com/api/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        // Configurar ActionBar/Toolbar con título
+        supportActionBar?.title = "Gestión de Contactos"
+        supportActionBar?.subtitle = "Bienvenido"
+
         //Asociar los objetos con componentes gráficos
-        etNumEmp = findViewById(R.id.txtNumEmp)
         etNombre = findViewById(R.id.txtNombre)
         etApellidos = findViewById(R.id.txtApellidos)
-        etSueldo = findViewById(R.id.txtSueldo)
+        etTelefono = findViewById(R.id.txtTelefono)
+        etCorreo = findViewById(R.id.txtCorreo)
         btnAgregar = findViewById(R.id.btnAgregar)
         btnBuscar = findViewById(R.id.btnBuscar)
         btnActualizar = findViewById(R.id.btnActualizar)
         btnEliminar = findViewById(R.id.btnEliminar)
         btnLista = findViewById(R.id.btnLista)
-
-        /*
-            Creación de objeto de clase ControladorBD para crear la base de datos
-            Sus parámetros son: contexto, nombre de la Base de Datos, null y versión de la BD
-            La ruta de creación de la base de datos en el dispositivo es:
-            android/data/<paquete>/databases/<nombre_bd>
-        */
-        admin = ControladorBD(this, "empresapatito.db", null, 1)
-        //Eventos onClick
-        btnAgregar.setOnClickListener { registrarEmpleado() }
-        btnBuscar.setOnClickListener { buscarEmpleado() }
-        btnActualizar.setOnClickListener { actualizarEmpleado() }
-        btnEliminar.setOnClickListener { eliminarEmpleado() }
-        btnLista.setOnClickListener { listarRegistros() }
-    }
-
-    private fun listarRegistros() {
-        val intent = Intent(this, ListadoActivity::class.java)
-        //Iniciar la Activity
-        startActivity(intent)
-    }
-
-    private fun eliminarEmpleado() {
-        val bd = admin.writableDatabase
-        //Variable para busqueda de dato para eliminar
-        val nump = etNumEmp.text.toString()
-        //Validar que exista el campo no este vacío
-        if (nump.isNotEmpty()) {
-            val cantidad = bd.delete("empleado", "numemp = $nump", null)
-            bd.close()
-
-            etNumEmp.setText("")
-            etNombre.setText("")
-            etApellidos.setText("")
-            etSueldo.setText("")
-            etNumEmp.requestFocus()
-
-            if (cantidad > 0) Toast.makeText(this, "Empleado eliminado.",
-                Toast.LENGTH_SHORT)
-                .show() else Toast.makeText(
-                this,
-                "El número de empleado no existe.",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            Toast.makeText(this, "Ingresa número de empleado", Toast.LENGTH_SHORT).show()
+        //Inicializar gestor de operaciones
+        requestQueue = Volley.newRequestQueue(this)
+        btnAgregar.setOnClickListener {
+            agregarContacto()
+        }
+        btnBuscar.setOnClickListener {
+            buscarContacto()
+        }
+        btnActualizar.setOnClickListener{
+            actualizarContacto()
+        }
+        btnEliminar.setOnClickListener {
+            eliminarContacto()
+        }
+        btnLista.setOnClickListener {
+            val intent = Intent(this, ListadoActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    private fun actualizarEmpleado() {
-        val bd = admin.writableDatabase
-
-        //Variables para obtener los valores de componentes gráficos
-        val nump = etNumEmp.text.toString()
-        val nomp = etNombre.text.toString()
-        val apep = etApellidos.text.toString()
-        val suep = etSueldo.text.toString()
-
-        //Validar que exista información registrada
-        if (nump.isNotEmpty() && nomp.isNotEmpty() && apep.isNotEmpty() && suep.isNotEmpty()) {
-            //Objeto que almacena los valores para enviar a la tabla
-            val registro = ContentValues()
-
-            registro.put("numemp", nump)
-            registro.put("nombre", nomp)
-            registro.put("apellidos", apep)
-            registro.put("sueldo", suep)
-
-            val cantidad = bd.update("empleado", registro, "numemp=$nump", null)
-            bd.close()
-
-            etNumEmp.setText("")
-            etNombre.setText("")
-            etApellidos.setText("")
-            etSueldo.setText("")
-            etNumEmp.requestFocus()
-            //Validar si existieron registros a borrar
-            if (cantidad > 0) Toast.makeText(
-                this,
-                "Datos del empleado actualizados.",
-                Toast.LENGTH_SHORT
-            ).show() else Toast.makeText(
-                this,
-                "El número de empleado no existe.",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            Toast.makeText(this, "Debes registrar primero los datos", Toast.LENGTH_SHORT).show()
-        }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
 
-    private fun buscarEmpleado() {
-        val bd = admin.readableDatabase
-
-        //Variable para busqueda de dato para obtener información
-        val nump = etNumEmp.text.toString()
-        //Validar que el campo no este vacio
-        if (nump.isNotEmpty()) {
-            //Objeto apunta al registro donde localice el dato, se le envia la instrucción sql de busqueda
-            val fila = bd.rawQuery(
-                "select nombre, apellidos, sueldo from empleado " +
-                        "where numemp=" + nump, null
-            )
-            //Valida
-            if (fila.moveToFirst()) {
-                //Se coloca en los componentes los valores encontrados
-                etNombre.setText(fila.getString(0))
-                etApellidos.setText(fila.getString(1))
-                etSueldo.setText(fila.getString(2))
-                //Se cierra la base de datos
-                bd.close()
-            } else {
-                Toast.makeText(this, "Número de empleado no existe.", Toast.LENGTH_SHORT).show()
-                etNumEmp.setText("")
-                etNumEmp.requestFocus()
-                bd.close()
-            } //else-if fila
-        } else {
-            Toast.makeText(this, "Ingresa número de empleado", Toast.LENGTH_SHORT).show()
-            etNumEmp.requestFocus()
-        } //else
-    }
-
-    private fun registrarEmpleado() {
-        //Establecer el modo de apertura de la base de datos en modo Escritura
-        val bd = admin.writableDatabase
-        //Variables para obtener los valores de componentes gráficos
-        val nump = etNumEmp.text.toString()
-        val nomp = etNombre.text.toString()
-        val apep = etApellidos.text.toString()
-        val suep = etSueldo.text.toString()
-
-        //Validar que exista información registrada
-        if (nump.isNotEmpty() && nomp.isNotEmpty() && apep.isNotEmpty() &&
-            suep.isNotEmpty()) {
-            //Objeto que almacena los valores para enviar a la tabla
-            val registro = ContentValues()
-            //Referencias a los datos que pasar a la BD
-            //indicando como parámetos de put el nombre del campo y el valor a insertar
-            //El segundo proviene de los campos de texto
-            registro.put("numemp", nump)
-            registro.put("nombre", nomp)
-            registro.put("apellidos", apep)
-            registro.put("sueldo", suep)
-            if (bd != null) {
-                //Almacenar los valores en la tabla
-                try {
-                    val x: Long = bd.insert("empleado", null, registro)
-                } catch (e: SQLException) {
-                    Log.e("Exception", "Error: " + e.message.toString())
-                }
-                //Cerrar la base de datos
-                bd.close()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_logout -> {
+                mostrarDialogoLogout()
+                true
             }
-            //Limpiar los campos de texto
-            etNumEmp.setText("")
-            etNombre.setText("")
-            etApellidos.setText("")
-            etSueldo.setText("")
-            etNumEmp.requestFocus()
-            //Confirmar la operación realizada
-            Toast.makeText(this, "Empleado registrado.", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Debes registrar primero los datos", Toast.LENGTH_SHORT).show()
-        } //else
+            R.id.action_about -> {
+                mostrarAcercaDe()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun mostrarDialogoLogout() {
+        AlertDialog.Builder(this)
+            .setTitle("Cerrar Sesión")
+            .setMessage("¿Está seguro que desea cerrar sesión?")
+            .setPositiveButton("Sí") { _, _ ->
+                realizarLogout()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun realizarLogout() {
+        Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
+        LoginActivity.cerrarSesionGlobal(this)
+    }
+
+    private fun mostrarAcercaDe() {
+        AlertDialog.Builder(this)
+            .setTitle("Acerca de la App")
+            .setMessage("Gestión de Contactos v1.0\n\n" +
+                    "Aplicación para administrar contactos\n" +
+                    "con conexión a base de datos MySQL\n" +
+                    "en servidor AWS EC2.\n\n" +
+                    "Desarrollado con Android Studio")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        AlertDialog.Builder(this)
+            .setTitle("Salir de la App")
+            .setMessage("¿Desea salir de la aplicación?")
+            .setPositiveButton("Salir") { _, _ ->
+                finishAffinity() // Cierra toda la app
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun ejecutarWebService(url: String, msg: String) {
+        Toast.makeText(applicationContext,msg, Toast.LENGTH_LONG).show()
+        val stringRequest = StringRequest(Request.Method.GET, url, {
+            fun onResponse(response: String?) {
+                Toast.makeText(this@MainActivity, response.toString(), Toast.LENGTH_SHORT).show()
+            }
+        },
+        {
+            fun onErrorResponse(error: VolleyError) {
+                Toast.makeText(this@MainActivity, error.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        val requestQueue: RequestQueue = Volley.newRequestQueue(this@MainActivity)
+        requestQueue.add(stringRequest)
+    }
+
+    private fun agregarContacto() {
+        ejecutarWebService(
+            url + "androidInsercionMySql.php?nombre=" +
+                    etNombre.text + "&apellidos=" + etApellidos.text +
+                    "&telefono=" + etTelefono.text + "&email=" +
+                    etCorreo.text,
+            "Contacto registrado."
+        )
+
+        limpiarCampos()
+    }
+
+    private fun buscarContacto() {
+        // Validar que los campos requeridos no estén vacíos
+        if (etNombre.text.toString().trim().isEmpty() || etApellidos.text.toString().trim().isEmpty()) {
+            Toast.makeText(this, "Ingrese nombre y apellidos para buscar", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        //Instancia que recibe la información del servidor
+        val cliente = AsyncHttpClient()
+
+        // Construir URL con parámetros
+        val urlBusqueda = url + "androidBusquedaMySql.php?nombre=" +
+                etNombre.text.toString().trim() + "&apellidos=" + etApellidos.text.toString().trim()
+
+        Log.d("MainActivity", "URL de búsqueda: $urlBusqueda") // Para debug
+
+        //Llamada al archivo PHP
+        cliente.get(urlBusqueda, object : AsyncHttpResponseHandler() {
+            override fun onSuccess(
+                statusCode: Int,
+                headers: Array<out Header>?,
+                responseBody: ByteArray?
+            ) {
+                //El código 200 indica que la petición fue exitosa
+                if (statusCode == 200 && responseBody != null) {
+                    try {
+                        val responseString = String(responseBody, Charsets.UTF_8)
+                        Log.d("MainActivity", "Response búsqueda: $responseString") // Para debug
+
+                        //Si existen registros como resultado de la búsqueda
+                        if (responseString.isNotEmpty() && responseString != "0") {
+
+                            val contacto = JSONArray(responseString)
+
+                            runOnUiThread {
+                                if (contacto.length() > 0) {
+                                    val contactoEncontrado = contacto.getJSONObject(0)
+
+                                    // Llenar teléfono si existe en la respuesta
+                                    if (contactoEncontrado.has("Telefono")) {
+                                        etTelefono.setText(contactoEncontrado.getString("Telefono"))
+                                    }
+
+                                    // Llenar email
+                                    if (contactoEncontrado.has("Email")) {
+                                        etCorreo.setText(contactoEncontrado.getString("Email"))
+                                    }
+
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        "Contacto encontrado",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+
+                        } else {
+                            runOnUiThread {
+                                // Limpiar campos si no se encuentra
+                                etTelefono.setText("")
+                                etCorreo.setText("")
+
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Contacto no encontrado.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+
+                    } catch (e: JSONException) {
+                        Log.e("MainActivity", "JSON Error en búsqueda: ${e.message}")
+                        runOnUiThread {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Error al procesar información: ${e.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Error en búsqueda: ${e.message}")
+                        runOnUiThread {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Error: ${e.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Sin resultados en búsqueda.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(
+                statusCode: Int,
+                headers: Array<out Header>?,
+                responseBody: ByteArray?,
+                error: Throwable?
+            ) {
+                val errorMessage = if (responseBody != null) {
+                    String(responseBody, Charsets.UTF_8)
+                } else {
+                    "Error de conexión"
+                }
+
+                Log.e("MainActivity", "HTTP Error en búsqueda $statusCode: $errorMessage")
+                Log.e("MainActivity", "Exception: ${error?.message}")
+
+                runOnUiThread {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Error de conexión: $statusCode - ${error?.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        })
+    }
+
+    private fun actualizarContacto() {
+        ejecutarWebService(
+            url + "androidActualizacionMySql.php?nombre=" +
+                    etNombre.text + "&apellidos=" + etApellidos.text +
+                    "&telefono=" + etTelefono.text + "&email=" +
+                    etCorreo.text,
+            "Contacto actualizado."
+        )
+        limpiarCampos()
+    }
+
+    private fun eliminarContacto() {
+        ejecutarWebService(
+            url + "androidEliminacionMySql.php?nombre=" +
+                    etNombre.text + "&apellidos=" + etApellidos.text,
+            "Contacto eliminado."
+        )
+        limpiarCampos()
+    }
+
+    private fun limpiarCampos() {
+        etNombre.setText("")
+        etApellidos.setText("")
+        etTelefono.setText("")
+        etCorreo.setText("")
+        etNombre.requestFocus()
     }
 }
