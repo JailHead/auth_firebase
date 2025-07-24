@@ -55,7 +55,7 @@ class ListadoActivity : AppCompatActivity() {
         txtDetalle.text = "⏳ Conectando a la base de datos...\n\nEspere un momento..."
 
         val cliente = AsyncHttpClient()
-        val url = "http://ec2-3-94-163-92.compute-1.amazonaws.com/api/androidConsultaMySql.php"
+        val url = "http://ec2-54-173-9-31.compute-1.amazonaws.com/api/androidConsultaMySql.php"
 
         cliente.get(url, object : AsyncHttpResponseHandler() {
             override fun onSuccess(

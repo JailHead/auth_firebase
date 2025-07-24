@@ -22,4 +22,10 @@
     <string name="logout">Cerrar Sesión</string>
 
     <string name="actualizar_lista">Actualizar Lista</string>
+
+    <string name="default_web_client_id">371836062123-pfr8evmfinf4241b0tnbva0o48k77qhb.apps.googleusercontent.com</string>
+
+    <string name="google_sign_in">Continuar con Google</string>
+    <string name="google_sign_in_error">Error al iniciar sesión con Google</string>
+    <string name="auth_error">Error de autenticación</string>
 </resources>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "371836062123",
+    "project_id": "almacenamientofirebase-4747b",
+    "storage_bucket": "almacenamientofirebase-4747b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371836062123:android:9d1e18ecc55d7edd9eeaee",
+        "android_client_info": {
+          "package_name": "com.example.mysqlite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371836062123-pfr8evmfinf4241b0tnbva0o48k77qhb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe_0cstMpvWSyV-sxqV8ReZmxQWz_S098"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371836062123-pfr8evmfinf4241b0tnbva0o48k77qhb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

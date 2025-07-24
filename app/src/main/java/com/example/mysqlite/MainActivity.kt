@@ -22,9 +22,10 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 class MainActivity : AppCompatActivity() {
-    //Objetos de componentes gráficos
     private lateinit var etNumEmp: EditText
     private lateinit var etNombre: EditText
     private lateinit var etApellidos: EditText
@@ -35,23 +36,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnActualizar: ImageButton
     private lateinit var btnEliminar: ImageButton
     private lateinit var btnLista: Button
-    //Gestionar operaciones con la BD
     private lateinit var requestQueue: RequestQueue
-    //API del servidor MySQL
+
+    private lateinit var auth: FirebaseAuth
+
     private val url = "http://ec2-3-94-163-92.compute-1.amazonaws.com/api/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        auth = FirebaseAuth.getInstance()
+
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Configurar ActionBar/Toolbar con título
-        supportActionBar?.title = "Gestión de Contactos"
-        supportActionBar?.subtitle = "Bienvenido"
+        configurarActionBar()
 
-        //Asociar los objetos con componentes gráficos
         etNombre = findViewById(R.id.txtNombre)
         etApellidos = findViewById(R.id.txtApellidos)
         etTelefono = findViewById(R.id.txtTelefono)
@@ -61,8 +62,8 @@ class MainActivity : AppCompatActivity() {
         btnActualizar = findViewById(R.id.btnActualizar)
         btnEliminar = findViewById(R.id.btnEliminar)
         btnLista = findViewById(R.id.btnLista)
-        //Inicializar gestor de operaciones
         requestQueue = Volley.newRequestQueue(this)
+
         btnAgregar.setOnClickListener {
             agregarContacto()
         }
@@ -78,6 +79,54 @@ class MainActivity : AppCompatActivity() {
         btnLista.setOnClickListener {
             val intent = Intent(this, ListadoActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun configurarActionBar() {
+        val sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+        val authType = sharedPreferences.getString("authType", "traditional")
+        val username = sharedPreferences.getString("username", "Usuario")
+
+        supportActionBar?.title = "Gestión de Contactos"
+
+        // Mostrar diferente subtítulo según el tipo de autenticación
+        when (authType) {
+            "google" -> {
+                val currentUser = auth.currentUser
+                if (currentUser != null) {
+                    supportActionBar?.subtitle = "Bienvenido ${currentUser.displayName ?: currentUser.email}"
+                } else {
+                    supportActionBar?.subtitle = "Bienvenido $username"
+                }
+            }
+            "traditional" -> {
+                supportActionBar?.subtitle = "Bienvenido $username"
+            }
+            else -> {
+                supportActionBar?.subtitle = "Bienvenido"
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        verificarEstadoAutenticacion()
+    }
+
+    private fun verificarEstadoAutenticacion() {
+        val sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+        val authType = sharedPreferences.getString("authType", "traditional")
+
+        if (authType == "google") {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                // Usuario de Google desconectado, regresar al login
+                Toast.makeText(this, "Sesión de Google expirada", Toast.LENGTH_SHORT).show()
+                LoginActivity.cerrarSesionGlobal(this)
+                return
+            } else {
+                Log.d("MainActivity", "Usuario Google activo: ${currentUser.email}")
+            }
         }
     }
 
@@ -114,17 +163,48 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun realizarLogout() {
-        Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
+        val sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+        val authType = sharedPreferences.getString("authType", "traditional")
+
+        // Mostrar mensaje personalizado según el tipo de autenticación
+        val message = when (authType) {
+            "google" -> "Sesión de Google cerrada"
+            "traditional" -> "Sesión cerrada"
+            else -> "Sesión cerrada"
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         LoginActivity.cerrarSesionGlobal(this)
     }
 
     private fun mostrarAcercaDe() {
+        val sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+        val authType = sharedPreferences.getString("authType", "traditional")
+        val username = sharedPreferences.getString("username", "Usuario")
+
+        val authInfo = when (authType) {
+            "google" -> {
+                val currentUser = auth.currentUser
+                if (currentUser != null) {
+                    "Autenticado con: Google\nUsuario: ${currentUser.displayName ?: currentUser.email}\nID: ${currentUser.uid}"
+                } else {
+                    "Autenticado con: Google (sesión local)"
+                }
+            }
+            "traditional" -> "Autenticado con: Sistema tradicional\nUsuario: $username"
+            else -> "Autenticado con: Sistema desconocido"
+        }
+
         AlertDialog.Builder(this)
             .setTitle("Acerca de la App")
             .setMessage("Gestión de Contactos v1.0\n\n" +
                     "Aplicación para administrar contactos\n" +
                     "con conexión a base de datos MySQL\n" +
                     "en servidor AWS EC2.\n\n" +
+                    "Soporte para autenticación múltiple:\n" +
+                    "• Google Sign-In (Firebase)\n" +
+                    "• Sistema tradicional\n\n" +
+                    "$authInfo\n\n" +
                     "Desarrollado con Android Studio")
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
@@ -153,11 +233,11 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, response.toString(), Toast.LENGTH_SHORT).show()
             }
         },
-        {
-            fun onErrorResponse(error: VolleyError) {
-                Toast.makeText(this@MainActivity, error.toString(), Toast.LENGTH_SHORT).show()
-            }
-        })
+            {
+                fun onErrorResponse(error: VolleyError) {
+                    Toast.makeText(this@MainActivity, error.toString(), Toast.LENGTH_SHORT).show()
+                }
+            })
 
         val requestQueue: RequestQueue = Volley.newRequestQueue(this@MainActivity)
         requestQueue.add(stringRequest)
