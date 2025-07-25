@@ -1,209 +1,240 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@color/background_white"
+    android:fillViewport="true"
     tools:context=".LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingVertical="72dp"
-        android:paddingHorizontal="48dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="32dp"
         android:gravity="center_vertical">
 
+        <!-- ✅ SECCIÓN SUPERIOR: Logo y Título Simplificado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="48dp"
+            android:layout_marginTop="32dp">
 
+            <!-- Logo más pequeño y elegante -->
             <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="24dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="16dp"
                 android:src="@drawable/ic_app_logo"
                 android:contentDescription="App Logo" />
 
+            <!-- Título principal más sutil -->
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="sans-serif-black"
-                android:textStyle="bold"
-                android:text="Iniciar Sesión"
-                android:textAlignment="center"
+                android:text="Gestión de Contactos"
                 android:textSize="24sp"
-                android:textColor="#273F4F" />
+                android:textColor="@color/text_primary"
+                android:fontFamily="sans-serif-light"
+                android:letterSpacing="0.05"
+                android:layout_marginBottom="8dp" />
 
+            <!-- Subtítulo más discreto -->
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Accede a tu agenda de contactos"
-                android:textAlignment="center"
+                android:text="Accede a tu agenda personal"
                 android:textSize="14sp"
-                android:textColor="#666666" />
+                android:textColor="@color/text_secondary"
+                android:fontFamily="sans-serif" />
+
         </LinearLayout>
 
-        <!-- ✅ NUEVA SECCIÓN: Botón Google Sign-In (prominente) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="24dp"
+            android:layout_marginBottom="32dp">
 
+            <!-- Botón Google Sign-In más prominente -->
             <Button
                 android:id="@+id/btnGoogleSignIn"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginBottom="16dp"
                 android:text="Continuar con Google"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#4285F4"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"
+                android:fontFamily="sans-serif-medium"
+                android:backgroundTint="@color/google_blue"
                 android:drawableLeft="@drawable/ic_google"
                 android:drawablePadding="12dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                app:cornerRadius="8dp"
-                app:elevation="2dp" />
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:layout_marginBottom="24dp"
+                app:cornerRadius="12dp"
+                android:elevation="2dp" />
 
-            <!-- ✅ NUEVO: Separador visual -->
+            <!-- Separador más elegante -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginVertical="8dp">
+                android:layout_marginBottom="24dp">
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="#E0E0E0" />
+                    android:background="@color/border_color" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="  o  "
-                    android:textSize="14sp"
-                    android:textColor="#999999" />
+                    android:text="o inicia con tu cuenta"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_hint"
+                    android:paddingHorizontal="16dp"
+                    android:fontFamily="sans-serif" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="#E0E0E0" />
+                    android:background="@color/border_color" />
+
+            </LinearLayout>
+
+            <!-- Formulario tradicional más limpio -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Campo Usuario -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/primary_green"
+                    app:boxBackgroundColor="@color/background_white"
+                    app:hintTextColor="@color/text_hint"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Usuario"
+                        android:inputType="text"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:paddingVertical="16dp"
+                        android:fontFamily="sans-serif"
+                        android:importantForAutofill="no" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Contraseña -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/primary_green"
+                    app:boxBackgroundColor="@color/background_white"
+                    app:hintTextColor="@color/text_hint"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/text_secondary"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Contraseña"
+                        android:inputType="textPassword"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:paddingVertical="16dp"
+                        android:fontFamily="sans-serif"
+                        android:importantForAutofill="no" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Botón Login Principal -->
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Iniciar Sesión"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:fontFamily="sans-serif-medium"
+                    android:backgroundTint="@color/primary_green"
+                    android:layout_marginBottom="12dp"
+                    app:cornerRadius="12dp"
+                    android:elevation="1dp" />
+
+                <!-- Botón Info más sutil -->
+                <Button
+                    android:id="@+id/btnInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Ver credenciales de prueba"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:textAllCaps="false"
+                    android:fontFamily="sans-serif"
+                    android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cornerRadius="8dp" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- ✅ SECCIÓN EXISTENTE: Formulario de Login tradicional (mantener) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:orientation="vertical">
-
-            <!-- Usuario -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Usuario"
-                android:textSize="16sp"
-                android:textColor="#273F4F"
-                android:fontFamily="sans-serif-medium" />
-
-            <EditText
-                android:id="@+id/etUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="12dp"
-                android:paddingHorizontal="16dp"
-                android:hint="Ingrese su usuario"
-                android:inputType="text"
-                android:textSize="16sp"
-                android:background="@drawable/input_txt"
-                android:importantForAutofill="no" />
-
-            <!-- Contraseña -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Contraseña"
-                android:textSize="16sp"
-                android:textColor="#273F4F"
-                android:fontFamily="sans-serif-medium" />
-
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="24dp"
-                android:paddingHorizontal="16dp"
-                android:hint="Ingrese su contraseña"
-                android:inputType="textPassword"
-                android:textSize="16sp"
-                android:background="@drawable/input_txt"
-                android:importantForAutofill="no" />
-
-            <!-- Botón Login tradicional -->
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="8dp"
-                android:text="INICIAR SESIÓN"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:backgroundTint="#273F4F"
-                android:textColor="#FFFFFF"
-                app:cornerRadius="8dp" />
-
-            <!-- Botón Info -->
-            <Button
-                android:id="@+id/btnInfo"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="Ver credenciales de prueba"
-                android:textSize="14sp"
-                android:backgroundTint="#E0E0E0"
-                android:textColor="#273F4F"
-                app:cornerRadius="8dp" />
-        </LinearLayout>
-
-        <!-- ✅ SECCIÓN EXISTENTE: Información adicional (mantener) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="Sistema de Gestión de Contactos"
-                android:textSize="12sp"
-                android:textColor="#999999" />
+                android:textSize="11sp"
+                android:textColor="@color/text_hint"
+                android:fontFamily="sans-serif"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Versión 1.0"
-                android:textSize="12sp"
-                android:textColor="#CCCCCC" />
+                android:textSize="11sp"
+                android:textColor="@color/text_hint"
+                android:fontFamily="sans-serif" />
+
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

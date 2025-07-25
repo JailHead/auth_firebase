@@ -31,7 +31,6 @@ class ListadoActivity : AppCompatActivity() {
         btnRegresar = findViewById(R.id.btnRegresar)
         btnActualizar = findViewById(R.id.btnActualizar)
 
-        // ✅ DEBUG: Forzar visibilidad del TextView
         txtDetalle.setBackgroundColor(android.graphics.Color.WHITE)
         txtDetalle.setTextColor(android.graphics.Color.BLACK)
         txtDetalle.textSize = 14f
@@ -51,11 +50,11 @@ class ListadoActivity : AppCompatActivity() {
         Log.d("DEBUG", "listarContactos - INICIADO")
 
         // Estado de carga visible
-        txtContador.text = "🔄 Consultando servidor..."
-        txtDetalle.text = "⏳ Conectando a la base de datos...\n\nEspere un momento..."
+        txtContador.text = "Consultando servidor..."
+        txtDetalle.text = "Conectando a la base de datos...\n\nEspere un momento..."
 
         val cliente = AsyncHttpClient()
-        val url = "http://ec2-54-173-9-31.compute-1.amazonaws.com/api/androidConsultaMySql.php"
+        val url = "http://ec2-100-27-195-37.compute-1.amazonaws.com/api/androidConsultaMySql.php"
 
         cliente.get(url, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
@@ -76,9 +75,7 @@ class ListadoActivity : AppCompatActivity() {
                         val totalContactos = contactos.length()
 
                         Log.d("DEBUG", "Total contactos: $totalContactos")
-
-                        // ✅ FORMATO SUPER SIMPLE
-                        var listaContactos = "📱 LISTA DE CONTACTOS\n"
+                        var listaContactos = "LISTA DE CONTACTOS\n"
                         listaContactos += "═════════════════════\n\n"
 
                         for (i in 0 until contactos.length()) {
@@ -101,12 +98,11 @@ class ListadoActivity : AppCompatActivity() {
                         }
 
                         listaContactos += "═════════════════════\n"
-                        listaContactos += "📊 Total: $totalContactos contactos"
+                        listaContactos += "Total: $totalContactos contactos"
 
                         Log.d("DEBUG", "Texto generado length: ${listaContactos.length}")
                         Log.d("DEBUG", "Primeros 50 chars: ${listaContactos.take(50)}")
 
-                        // ✅ ACTUALIZAR UI CON DEBUG
                         runOnUiThread {
                             Log.d("DEBUG", "Actualizando UI...")
 
@@ -122,18 +118,17 @@ class ListadoActivity : AppCompatActivity() {
 
                             Log.d("DEBUG", "UI actualizada. Texto en txtDetalle: ${txtDetalle.text.take(50)}")
 
-                            // ✅ FORZAR INVALIDACIÓN DE LA VISTA
                             txtDetalle.invalidate()
                             txtDetalle.requestLayout()
 
-                            Toast.makeText(this@ListadoActivity, "✅ $totalContactos contactos cargados", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ListadoActivity, "$totalContactos contactos cargados", Toast.LENGTH_SHORT).show()
                         }
 
                     } else {
                         Log.d("DEBUG", "Sin contactos")
                         runOnUiThread {
-                            txtDetalle.text = "📭 SIN CONTACTOS\n\nNo hay contactos registrados en la base de datos."
-                            txtContador.text = "📊 Total: 0 contactos"
+                            txtDetalle.text = "SIN CONTACTOS\n\nNo hay contactos registrados en la base de datos."
+                            txtContador.text = "Total: 0 contactos"
                         }
                     }
 

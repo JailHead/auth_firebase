@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
-    private val url = "http://ec2-3-94-163-92.compute-1.amazonaws.com/api/"
+    private val url = "http://ec2-100-27-195-37.compute-1.amazonaws.com/api/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
