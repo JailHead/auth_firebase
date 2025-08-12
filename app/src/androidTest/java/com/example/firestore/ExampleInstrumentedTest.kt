@@ -1,4 +1,4 @@
-package com.example.mysqlite
+package com.example.firestore
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -191,47 +191,7 @@
                     app:cornerRadius="12dp"
                     android:elevation="1dp" />
 
-                <!-- Botón Info más sutil -->
-                <Button
-                    android:id="@+id/btnInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Ver credenciales de prueba"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_secondary"
-                    android:textAllCaps="false"
-                    android:fontFamily="sans-serif"
-                    android:background="@android:color/transparent"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:cornerRadius="8dp" />
-
             </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sistema de Gestión de Contactos"
-                android:textSize="11sp"
-                android:textColor="@color/text_hint"
-                android:fontFamily="sans-serif"
-                android:layout_marginBottom="4dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Versión 1.0"
-                android:textSize="11sp"
-                android:textColor="@color/text_hint"
-                android:fontFamily="sans-serif" />
 
         </LinearLayout>
 

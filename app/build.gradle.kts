@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mysqlite"
+    namespace = "com.example.firestore"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.mysqlite"
+        applicationId = "com.example.firestore"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -54,12 +54,15 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
     implementation("com.google.firebase:firebase-auth")
 
-    // Google Sign-In moderno (Credential Manager)
+    // Google Sign-In
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
-    // Para coroutines (necesario para Credential Manager)
+    // Para coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+
+    //Firestore
+    implementation("com.google.firebase:firebase-firestore")
 }

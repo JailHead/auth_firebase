@@ -1,5 +1,6 @@
-package com.example.mysqlite
+package com.example.firestore
 
+import android.accounts.AccountManager
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.SharedPreferences
@@ -9,7 +10,6 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 
 //firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +30,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var etUsuario: EditText
     private lateinit var etPassword: EditText
     private lateinit var btnLogin: Button
-    private lateinit var btnInfo: Button
     private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var auth: FirebaseAuth
@@ -61,17 +60,12 @@ class LoginActivity : AppCompatActivity() {
         etUsuario = findViewById(R.id.etUsuario)
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
-        btnInfo = findViewById(R.id.btnInfo)
 
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn)
 
         // Configurar eventos
         btnLogin.setOnClickListener {
             realizarLoginTradicional()
-        }
-
-        btnInfo.setOnClickListener {
-            mostrarCredenciales()
         }
 
         btnGoogleSignIn.setOnClickListener {
@@ -226,16 +220,6 @@ class LoginActivity : AppCompatActivity() {
         etUsuario.setText("")
         etPassword.setText("")
         etUsuario.requestFocus()
-    }
-
-    private fun mostrarCredenciales() {
-        AlertDialog.Builder(this)
-            .setTitle("Credenciales de Prueba")
-            .setMessage("Usuario: $usuarioValido\nContraseña: $passwordValido")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
     }
 
     // Función pública para cerrar sesión (llamada desde MainActivity)

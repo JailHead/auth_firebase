@@ -1,4 +1,4 @@
-package com.example.mysqlite
+package com.example.firestore
 
 import org.junit.Test
 
